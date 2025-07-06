@@ -1,0 +1,212 @@
+version: 2
+
+sources:
+  - name: public
+    schema: public
+    tables:
+      - name: users
+        description: "ユーザーテーブル"
+        columns:
+          - name: id
+            description: "ユーザーID"
+            tests:
+              - unique
+              - not_null
+          - name: username
+            description: "ユーザー名"
+            tests:
+              - not_null
+          - name: email
+            description: "メールアドレス"
+            tests:
+              - not_null
+          - name: age
+            description: "年齢"
+
+      - name: products
+        description: "商品テーブル"
+        columns:
+          - name: id
+            description: "商品ID"
+            tests:
+              - unique
+              - not_null
+          - name: name
+            description: "商品名"
+            tests:
+              - not_null
+          - name: price
+            description: "価格"
+            tests:
+              - not_null
+          - name: stock
+            description: "在庫数"
+
+      - name: orders
+        description: "注文テーブル"
+        columns:
+          - name: id
+            description: "注文ID"
+            tests:
+              - unique
+              - not_null
+          - name: user_id
+            description: "ユーザーID"
+            tests:
+              - not_null
+              - relationships:
+                  to: source('public', 'users')
+                  field: id
+          - name: order_date
+            description: "注文日"
+            tests:
+              - not_null
+          - name: status
+            description: "注文ステータス"
+
+      - name: order_items
+        description: "注文明細テーブル"
+        columns:
+          - name: id
+            description: "明細ID"
+            tests:
+              - unique
+              - not_null
+          - name: order_id
+            description: "注文ID"
+            tests:
+              - not_null
+              - relationships:
+                  to: source('public', 'orders')
+                  field: id
+          - name: product_id
+            description: "商品ID"
+            tests:
+              - not_null
+              - relationships:
+                  to: source('public', 'products')
+                  field: id
+          - name: quantity
+            description: "数量"
+            tests:
+              - not_null
+
+      - name: payments
+        description: "支払いテーブル"
+        columns:
+          - name: id
+            description: "支払いID"
+            tests:
+              - unique
+              - not_null
+          - name: order_id
+            description: "注文ID"
+            tests:
+              - not_null
+              - relationships:
+                  to: source('public', 'orders')
+                  field: id
+          - name: amount
+            description: "支払金額"
+          - name: paid_at
+            description: "支払日時"
+
+      - name: shipments
+        description: "配送テーブル"
+        columns:
+          - name: id
+            description: "配送ID"
+            tests:
+              - unique
+              - not_null
+          - name: order_id
+            description: "注文ID"
+            tests:
+              - not_null
+              - relationships:
+                  to: source('public', 'orders')
+                  field: id
+          - name: shipped_at
+            description: "配送日時"
+          - name: tracking_number
+            description: "追跡番号"
+
+      - name: categories
+        description: "カテゴリテーブル"
+        columns:
+          - name: id
+            description: "カテゴリID"
+            tests:
+              - unique
+              - not_null
+          - name: name
+            description: "カテゴリ名"
+            tests:
+              - not_null
+
+      - name: product_categories
+        description: "商品カテゴリ中間テーブル"
+        columns:
+          - name: product_id
+            description: "商品ID"
+            tests:
+              - not_null
+              - relationships:
+                  to: source('public', 'products')
+                  field: id
+          - name: category_id
+            description: "カテゴリID"
+            tests:
+              - not_null
+              - relationships:
+                  to: source('public', 'categories')
+                  field: id
+
+      - name: reviews
+        description: "レビューテーブル"
+        columns:
+          - name: id
+            description: "レビューID"
+            tests:
+              - unique
+              - not_null
+          - name: product_id
+            description: "商品ID"
+            tests:
+              - not_null
+              - relationships:
+                  to: source('public', 'products')
+                  field: id
+          - name: user_id
+            description: "ユーザーID"
+            tests:
+              - not_null
+              - relationships:
+                  to: source('public', 'users')
+                  field: id
+          - name: rating
+            description: "評価"
+            tests:
+              - not_null
+          - name: comment
+            description: "コメント"
+
+      - name: notifications
+        description: "お知らせテーブル"
+        columns:
+          - name: id
+            description: "お知らせID"
+            tests:
+              - unique
+              - not_null
+          - name: user_id
+            description: "ユーザーID"
+            tests:
+              - not_null
+              - relationships:
+                  to: source('public', 'users')
+                  field: id
+          - name: message
+            description: "メッセージ"
+          - name: notified_at
+            description: "通知日時"
