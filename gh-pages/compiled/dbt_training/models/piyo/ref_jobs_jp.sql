@@ -1,0 +1,1 @@
+select * from "dbt_training"."public"."jobs_jp"
